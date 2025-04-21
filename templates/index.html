@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>test</title>
+    <meta charset="utf-8" />
+    <style>
+      #map {
+        height: 100vh;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>カレー屋さんを探す</h1>
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        const jimbocho = { lat: 35.6959, lng: 139.7570 }; // テストで神保町の座標を設定
+
+        const map = new google.maps.Map(document.getElementById("map"), {
+          center: jimbocho,
+          zoom: 16,
+        });
+        // Places APIを使うために必要
+        const service = new google.maps.places.PlacesService(map);
+
+        service.nearbySearch(
+          {
+            location: jimbocho,
+            radius: 1000, // 半径1km以内を検索
+            keyword: "カレー",
+          },
+          (results, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+              for (let i = 0; i < results.length; i++) {
+                const place = results[i];
+                new google.maps.Marker({
+                  map,
+                  position: place.geometry.location,
+                  title: place.name,
+                });
+              }
+            } else {
+              alert("カレー屋の取得に失敗: " + status);
+            }
+          }
+        );
+      }
+    </script>
+
+    <script
+      src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap&libraries=places"
+      async
+      defer
+    ></script>
+  </body>
+</html>
